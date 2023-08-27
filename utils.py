@@ -1,27 +1,54 @@
+import os
 import datetime
 
-def run_post_shutdown_tasks(server):
-    # Find the maximum message count among clients
-    max_message_count = max(server.message_counts.values(), default=0)
+# Read and return the longest messages from client files
+def find_longest_message():
+    longest_message = ""
+    longest_client_name = ""
+    for file_name in os.listdir("."):
+        if file_name.startswith("client_") and file_name.endswith(".txt"):
+            with open(file_name, "r") as file:
+                lines = file.readlines()
 
-    # Find clients with the maximum message count
-    most_active_clients = [addr for addr, count in server.message_counts.items() if count == max_message_count]
-  
-    if most_active_clients:
-        print("Most active client:")
-        for addr in most_active_clients:
-            most_active_client_name = server.get_client_name(addr)
-            print(f"- {most_active_client_name}: Number of messages: {max_message_count}")
-    else:
-        print("No active clients.")
+                # Find the longest message
+                for line in lines:
+                    if len(line) > len(longest_message):
+                        longest_message = line
+                        longest_client_name = file_name.split("_")[1]
+    return longest_message.strip(), longest_client_name.strip()
 
-    # Find and print the longest messages sent by clients.
-    server.find_longest_messages()
+# Read and return the most active client based on message counts
+def find_most_active_client():
+    most_active_client = ""
+    most_messages_count = 0
 
-    # Define a start and end time for the time frame
-    start_time = datetime.datetime.strptime("2023-08-24 19:4:00", '%Y-%m-%d %H:%M:%S')
-    end_time = datetime.datetime.strptime("2023-08-24 19:5:00", '%Y-%m-%d %H:%M:%S')
-    
-    # Print messages sent within the specified time frame
-    server.print_messages_in_time_frame(start_time, end_time)
-   
+    for file_name in os.listdir("."):
+        if file_name.startswith("client_") and file_name.endswith(".txt"):
+            with open(file_name, "r") as file:
+                lines = file.readlines()
+                message_count = len(lines)
+                client_name = file_name.split("_")[1]
+
+                # Compare the current message_count with most_messages_count
+                if message_count > most_messages_count:
+                    most_messages_count = message_count
+                    most_active_client = client_name
+
+    return most_active_client
+
+
+# Read and return messages sent within the specified time frame
+def read_messages_in_time_frame(start_time, end_time):
+    all_messages = []
+
+    for file_name in os.listdir("."):
+        if file_name.startswith("client_") and file_name.endswith(".txt"):
+            with open(file_name, "r") as file:
+                lines = file.readlines()
+                for line in lines:
+                    timestamp_str = line.split("[")[1].split("]")[0]
+                    timestamp = datetime.datetime.strptime(timestamp_str, '%Y-%m-%d %H:%M:%S')
+                    if start_time <= timestamp <= end_time:
+                        all_messages.append(line.strip())
+
+    return all_messages
