@@ -1,8 +1,10 @@
 import socket
 import threading
-import datetime 
+import datetime
 from dotenv import load_dotenv
+
 load_dotenv()
+
 
 class ChatServer:
     def __init__(self, host, port):
@@ -11,7 +13,7 @@ class ChatServer:
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server.bind((self.HOST, self.PORT))
         self.server.listen(2)
-        
+
         # Store connected client socket objects
         self.clients = []
 
@@ -28,13 +30,14 @@ class ChatServer:
                 # Save message to a file
                 timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 with open(f"client_{client_name}_{addr[1]}.txt", "a") as file:
-                    file.write(f"[{timestamp}] {message}\n")
+                    file.write(f"[{timestamp}] {message}")
 
                 for client in self.clients:
                     if client != client_socket:
                         client.send(message.encode('utf-8'))
             except:
                 break
+
     def client_acceptance_thread(self):
         print("Server is listening...")
         try:
@@ -60,3 +63,4 @@ class ChatServer:
 
         self.server.close()
         print("Server shut down.")
+
