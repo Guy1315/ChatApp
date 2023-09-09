@@ -52,3 +52,14 @@ def read_messages_in_time_frame(start_time, end_time):
                         all_messages.append(line.strip())
 
     return all_messages
+
+def enter_date():
+    is_valid = False
+    while not is_valid:
+        try:
+            date = input()
+            date_format = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
+            is_valid=True
+        except ValueError:
+            print("please enter the time in the specified format")
+    return date_format

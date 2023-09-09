@@ -2,7 +2,7 @@ from server import ChatServer
 import threading
 import os
 import datetime
-from utils import find_longest_message, find_most_active_client, read_messages_in_time_frame
+from utils import find_longest_message, find_most_active_client, read_messages_in_time_frame , enter_date
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -24,18 +24,16 @@ def main():
     except KeyboardInterrupt:
         print("\nServer is shutting down...")
         server.shutdown_server()
-    finally:
-        start_time_str = input("Enter start time (YYYY-MM-DD HH:MM:SS): ")
-        end_time_str = input("Enter end time (YYYY-MM-DD HH:MM:SS): ")
 
-        start_time = datetime.datetime.strptime(start_time_str, '%Y-%m-%d %H:%M:%S')
-        end_time = datetime.datetime.strptime(end_time_str, '%Y-%m-%d %H:%M:%S')
+    print("Enter start time (YYYY-MM-DD HH:MM:SS): ")
+    start_time = enter_date()
+    print("Enter end time (YYYY-MM-DD HH:MM:SS): ")
+    end_time = enter_date()
+    messages_in_time_frame = read_messages_in_time_frame(start_time, end_time)
 
-        messages_in_time_frame = read_messages_in_time_frame(start_time, end_time)
-
-        print("\nMessages in Time Frame:")
-        for message in messages_in_time_frame:
-            print(message)
+    print("\nMessages in Time Frame:")
+    for message in messages_in_time_frame:
+        print(message)
 
 
 if __name__ == "__main__":
