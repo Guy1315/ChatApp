@@ -37,9 +37,9 @@ def display_message(message):
 
 # Function to send a message to the server
 def send_message():
-    message = chat_app.input_area.get('1.0', 'end')
+    message = chat_app.input_area.get('1.0', 'end').strip()
     if message:
-        formatted_message = f"{nickname}: {message}"
+        formatted_message = f"{nickname}: {message}\n"
         chat_app.input_area.delete('1.0', 'end')
         chat_app.text_area.config(state="normal")
         chat_app.text_area.insert(tk.END, formatted_message)
